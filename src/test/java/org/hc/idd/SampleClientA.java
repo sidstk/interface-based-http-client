@@ -1,4 +1,4 @@
-package org.hc.idd.example;
+package org.hc.idd;
 
 import org.hc.idd.compile.annotations.ByBdCompile;
 import org.hc.idd.method.annotations.GET;
@@ -16,12 +16,4 @@ public interface SampleClientA {
   @POST
   <T> Mono<ResponseEntity<T>> callApi2(
       String url, Object requestBody, ParameterizedTypeReference<T> responseType);
-
-  //  // Non-reactive apis
-  //  @GET(isReactive = false)
-  //  <T> T callNonRxApi1(String url, ParameterizedTypeReference<T> responseType);
-  //
-  //  @POST
-  //  <T> T callNonRxApi2(String url, Object requestBody, ParameterizedTypeReference<T>
-  // responseType);
 }

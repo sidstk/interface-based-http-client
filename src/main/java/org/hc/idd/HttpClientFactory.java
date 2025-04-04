@@ -7,6 +7,7 @@ import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import org.hc.idd.compile.annotations.ProxyType;
+import org.hc.idd.factory.ClientImplClassFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestClient;
@@ -14,8 +15,13 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 public class HttpClientFactory {
   private static final Logger log = LoggerFactory.getLogger(HttpClientFactory.class);
+  private final ClientImplClassFactory clientImplClassFactory;
 
-  public static <T> T create(Class<T> tClass, WebClient webClient) throws ClassNotFoundException {
+  public HttpClientFactory(ClientImplClassFactory clientImplClassFactory) {
+    this.clientImplClassFactory = clientImplClassFactory;
+  }
+
+  public <T> T create(Class<T> tClass, WebClient webClient) throws ClassNotFoundException {
 
     return createInstance(
         tClass,
@@ -32,7 +38,8 @@ public class HttpClientFactory {
         aClass -> {
           try {
             return (DynamicType.Unloaded<T>)
-                ByBdClientInterfaceImplFactory.createClientImplClassForWebClientBased(
+                clientImplClassFactory
+                    .createClientImplClassForWebClientBased(
                         new TypeDescription.ForLoadedType(aClass))
                     .make();
           } catch (NoSuchMethodException e) {
@@ -41,7 +48,7 @@ public class HttpClientFactory {
         });
   }
 
-  public static <T> T create(Class<T> tClass, RestClient restClient) throws ClassNotFoundException {
+  public <T> T create(Class<T> tClass, RestClient restClient) throws ClassNotFoundException {
 
     return createInstance(
         tClass,
@@ -58,7 +65,8 @@ public class HttpClientFactory {
         aClass -> {
           try {
             return (DynamicType.Unloaded<T>)
-                ByBdClientInterfaceImplFactory.createClientImplClassForRestClientBased(
+                clientImplClassFactory
+                    .createClientImplClassForRestClientBased(
                         new TypeDescription.ForLoadedType(aClass))
                     .make();
           } catch (NoSuchMethodException e) {
@@ -67,7 +75,7 @@ public class HttpClientFactory {
         });
   }
 
-  private static <T> T createInstance(
+  private <T> T createInstance(
       Class<T> tClass,
       Function<Class<? extends T>, T> constructorFunction,
       Function<Class<T>, DynamicType.Unloaded<T>> byteBuddyHandler)

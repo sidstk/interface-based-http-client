@@ -1,5 +1,6 @@
 package org.hc.idd;
 
+import java.util.List;
 import net.bytebuddy.build.Plugin;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.description.method.MethodDescription;
@@ -8,14 +9,21 @@ import net.bytebuddy.dynamic.ClassFileLocator;
 import net.bytebuddy.dynamic.DynamicType;
 import org.hc.idd.compile.annotations.ByBdCompile;
 import org.hc.idd.compile.annotations.ProxyType;
+import org.hc.idd.factory.ClientImplClassFactory;
+import org.hc.idd.proxy.HttpGetMethodProxy;
+import org.hc.idd.proxy.HttpPostMethodProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ByBdClientImplMavenPlugin implements Plugin, Plugin.Factory {
-  private static final Logger log = LoggerFactory.getLogger(ByBdClientImplMavenPlugin.class);
+public class ByBdClientMavenPlugin implements Plugin, Plugin.Factory {
+  private static final Logger log = LoggerFactory.getLogger(ByBdClientMavenPlugin.class);
+  private final ClientImplClassFactory clientImplClassFactory;
 
-  public ByBdClientImplMavenPlugin() {
-    log.debug("Init ByBdClientImplMavenPlugin");
+  public ByBdClientMavenPlugin() {
+
+    this.clientImplClassFactory =
+        new ByBdClientImplClassFactory(
+            List.of(new HttpGetMethodProxy(), new HttpPostMethodProxy()));
   }
 
   @Override
@@ -53,18 +61,16 @@ public class ByBdClientImplMavenPlugin implements Plugin, Plugin.Factory {
       DynamicType helper;
       if (isReactiveMethod && isNonReactiveMethod) {
         helper =
-            ByBdClientInterfaceImplFactory.createClientImplClassForRestClientAndWebClientBased(
-                    typeDescription)
+            clientImplClassFactory
+                .createClientImplClassForRestClientAndWebClientBased(typeDescription)
                 .make();
 
       } else if (isReactiveMethod) {
         helper =
-            ByBdClientInterfaceImplFactory.createClientImplClassForWebClientBased(typeDescription)
-                .make();
+            clientImplClassFactory.createClientImplClassForWebClientBased(typeDescription).make();
       } else {
         helper =
-            ByBdClientInterfaceImplFactory.createClientImplClassForRestClientBased(typeDescription)
-                .make();
+            clientImplClassFactory.createClientImplClassForRestClientBased(typeDescription).make();
       }
       boolean isProxyTypeAnnotationExist =
           typeDescription.getDeclaredAnnotations().stream()
