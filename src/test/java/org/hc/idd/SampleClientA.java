@@ -11,9 +11,9 @@ import reactor.core.publisher.Mono;
 public interface SampleClientA {
 
   @GET
-  <T> Mono<ResponseEntity<T>> callApi1(String url, ParameterizedTypeReference<T> responseType);
+  <T> Mono<ResponseEntity<T>> api(String url, ParameterizedTypeReference<T> responseType);
 
   @POST
-  <T> Mono<ResponseEntity<T>> callApi2(
+  <T> Mono<ResponseEntity<T>> api2(
       String url, Object requestBody, ParameterizedTypeReference<T> responseType);
 }

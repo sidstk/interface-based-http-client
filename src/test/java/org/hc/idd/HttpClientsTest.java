@@ -42,14 +42,14 @@ public class HttpClientsTest {
           .when(() -> HttpClientService.post(any(WebClient.class), any(), any(), any()))
           .thenReturn(Mono.just(mockedResponse));
       StepVerifier.create(
-              instance.callApi1(
+              instance.api(
                   "https://jsonplaceholder.typicode.com/todos/1",
                   new ParameterizedTypeReference<String>() {}))
           .expectNext(mockedResponse)
           .verifyComplete();
 
       StepVerifier.create(
-              instance.callApi2(
+              instance.api2(
                   "https://jsonplaceholder.typicode.com/todos/1",
                   "",
                   new ParameterizedTypeReference<String>() {}))
@@ -73,12 +73,12 @@ public class HttpClientsTest {
           .thenReturn(mockedResponse);
       Assertions.assertEquals(
           mockedResponse,
-          instance.callApi1(
+          instance.api1(
               "https://jsonplaceholder.typicode.com/todos/1",
               ParameterizedTypeReference.forType(String.class)));
       Assertions.assertEquals(
           mockedResponse,
-          instance.callApi2(
+          instance.api2(
               "https://jsonplaceholder.typicode.com/todos/1",
               "",
               ParameterizedTypeReference.forType(String.class)));

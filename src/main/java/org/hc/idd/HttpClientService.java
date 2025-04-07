@@ -28,18 +28,6 @@ public class HttpClientService {
         .exchangeToMono(clientResponse -> clientResponse.toEntity(responseType));
   }
 
-  public static <T> Mono<ResponseEntity<T>> put(
-      WebClient webClient,
-      String url,
-      Object requestBody,
-      ParameterizedTypeReference<T> responseType) {
-    return webClient
-        .put()
-        .uri(url)
-        .bodyValue(requestBody)
-        .exchangeToMono(clientResponse -> clientResponse.toEntity(responseType));
-  }
-
   public static <T> T get(
       RestClient restClient, String url, ParameterizedTypeReference<T> responseType) {
     return restClient.get().uri(url).retrieve().body(responseType);
@@ -51,13 +39,5 @@ public class HttpClientService {
       Object requestBody,
       ParameterizedTypeReference<T> responseType) {
     return restClient.post().uri(url).body(requestBody).retrieve().body(responseType);
-  }
-
-  public static <T> T put(
-      RestClient restClient,
-      String url,
-      Object requestBody,
-      ParameterizedTypeReference<T> responseType) {
-    return restClient.put().uri(url).body(requestBody).retrieve().body(responseType);
   }
 }

@@ -10,8 +10,8 @@ public interface SampleClientB {
 
   // Non-reactive apis
   @GET
-  <T> T callApi1(String url, ParameterizedTypeReference<T> responseType);
+  <T> T api1(String url, ParameterizedTypeReference<T> responseType);
 
   @POST
-  <T> T callApi2(String url, Object requestBody, ParameterizedTypeReference<T> responseType);
+  <T> T api2(String url, Object requestBody, ParameterizedTypeReference<T> responseType);
 }
